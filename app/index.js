@@ -8,6 +8,10 @@ const connection = mysql.createConnection({
   database: "dbpeople",
 });
 
+app.get("/favicon.ico", (req, resp) => {
+  resp.sendStatus(204);
+});
+
 app.get("/:name", (req, resp) => {
   const { name } = req.params;
   console.log(name);
