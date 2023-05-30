@@ -1,0 +1,42 @@
+version: '3'
+services:
+  mysql:
+    container_name: mysqlcontainer
+    image: mysql/mysql-server:8.0.24-1.2.2-server
+    environment:  
+        MYSQL_ROOT_PASSWORD: senhaforte
+        MYSQL_ROOT_HOST: "%"
+    volumes:
+        - ./dbdata:/var/lib/mysql
+        - ./database:/docker-entrypoint-initdb.d
+    networks:
+        - ntw-app-db
+    restart: always
+  node:
+    container_name: nodecontainer
+    build:
+        context: app 
+    depends_on:
+        - mysql    
+    networks:
+        - ntw-app-db
+        - ntw-app-proxy
+    entrypoint:  dockerize -wait tcp://mysql:3306 -timeout 30s
+    command: "node index.js"
+  nginx:
+    container_name: nginxcontainer
+    build:
+        context: nginx 
+    ports: 
+        - 8080:80
+    restart: on-failure
+    entrypoint: dockerize -wait tcp://node:3000 -timeout 60s /docker-entrypoint.sh nginx -g 'daemon off;'
+    depends_on:
+        - node    
+    networks:
+        - ntw-app-proxy
+networks:
+    ntw-app-db:
+        driver: bridge      
+    ntw-app-proxy:
+        driver: bridge      
