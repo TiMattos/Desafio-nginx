@@ -8,13 +8,13 @@ const connection = mysql.createConnection({
   database: "dbpeople",
 });
 
-app.get("/", (req, resp) => {
-  const names = ["Thiago", "Roberto", "Pedro", "Arthur"];
-  const values = names.map(name => [name]);
+app.get("/:name", (req, resp) => {
+  const { name } = req.params;
+  console.log(name);
 
-  const query = "INSERT INTO people (nome) VALUES ?";
-
-  connection.query(query, [values], (err, results)  => {
+  connection.query(
+    `INSERT INTO people SET nome=?`, name,
+    (err, results) => {
       if (err) {
         return resp.send(`Ocorreu um erro  
           ${err.message}`);
