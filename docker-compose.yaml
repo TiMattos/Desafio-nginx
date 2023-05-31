@@ -22,6 +22,8 @@ services:
         - ntw-app-db
         - ntw-app-proxy
     entrypoint:  dockerize -wait tcp://mysql:3306 -timeout 30s
+    volumes:
+      - "./node:/usr/local/sbin"
     command: "node index.js"
   nginx:
     container_name: nginxcontainer
