@@ -22,10 +22,11 @@ services:
         - mysql    
     networks:
         - ntw-app-db
-    entrypoint:  dockerize -wait tcp://mysql:3306 -timeout 30s
+    entrypoint:  dockerize -wait tcp://mysql:3306 -timeout 30s sh -c "node index.js"
     volumes:
       - "./node:/usr/src/app"
-    command: "node index.js"
+      - /usr/src/app/node_modules
+    # command: "node index.js"
   
   nginx:
     container_name: nginxcontainer
@@ -34,7 +35,6 @@ services:
     ports: 
         - 8080:80
     restart: on-failure
-    entrypoint: dockerize -wait tcp://node:3000 -timeout 60s /docker-entrypoint.sh nginx -g 'daemon off;'
     depends_on:
         - node    
     networks:
