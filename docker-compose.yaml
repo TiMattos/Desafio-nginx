@@ -24,7 +24,7 @@ services:
         - ntw-app-db
     entrypoint:  dockerize -wait tcp://mysql:3306 -timeout 30s sh -c "node index.js"
     volumes:
-      - "./node:/usr/src/app"
+      - ./node:/usr/src/app
       - /usr/src/app/node_modules
     # command: "node index.js"
   
