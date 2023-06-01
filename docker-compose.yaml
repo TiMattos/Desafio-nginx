@@ -1,5 +1,6 @@
 version: '3'
 services:
+  
   mysql:
     container_name: mysqlcontainer
     image: mysql/mysql-server:8.0.24-1.2.2-server
@@ -12,19 +13,20 @@ services:
     networks:
         - ntw-app-db
     restart: always
+  
   node:
     container_name: nodecontainer
     build:
-        context: app 
+        context: node 
     depends_on:
         - mysql    
     networks:
         - ntw-app-db
-        - ntw-app-proxy
     entrypoint:  dockerize -wait tcp://mysql:3306 -timeout 30s
     volumes:
-      - "./app:/usr/local/sbin"
+      - "./node:/usr/src/app"
     command: "node index.js"
+  
   nginx:
     container_name: nginxcontainer
     build:
@@ -36,9 +38,9 @@ services:
     depends_on:
         - node    
     networks:
-        - ntw-app-proxy
+        - ntw-app-db
+
 networks:
     ntw-app-db:
         driver: bridge      
-    ntw-app-proxy:
-        driver: bridge      
+ 
